@@ -31,12 +31,13 @@ TAG_REQUIREMENTS = {
     'Level-8': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-level-8-dates-and-times'),
     'A-MoreOOP': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-moreoop'),
     'A-Packages': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-packages'),
-    'A-Gradle': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-gradle-use-gradle'),
+    'A-Gradle': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-gradle'),
     'A-JUnit': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-junit'),
     'A-Jar': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-jar'),
     'A-JavaDoc': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-javadoc'),
     'A-CodingStandard': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-codingstandard'),
     'Level-9': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-level-9-find'),
+    'A-AiAssisted': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week6/project.html', '1-add-increment-a-aiassisted'),
 }
 
 def get_current_tag():
