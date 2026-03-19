@@ -31,7 +31,7 @@ TAG_REQUIREMENTS = {
     'Level-8': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-level-8-dates-and-times'),
     'A-MoreOOP': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-moreoop'),
     'A-Packages': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-packages'),
-    'A-Gradle': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-gradle'),
+    'A-Gradle': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-gradle-use-gradle'),
     'A-JUnit': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-junit'),
     'A-Jar': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-jar'),
     'A-JavaDoc': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-javadoc'),
