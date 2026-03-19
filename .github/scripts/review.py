@@ -29,13 +29,13 @@ TAG_REQUIREMENTS = {
     # Week 3 increments
     'Level-7': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-level-7-save'),
     'Level-8': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-level-8-dates-and-times'),
-    'A-MoreOOP': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-moreoop-use-more-oop'),
-    'A-Packages': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-packages-organize-into-packages'),
-    'A-Gradle': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-gradle-use-gradle'),
+    'A-MoreOOP': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-moreoop'),
+    'A-Packages': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-packages'),
+    'A-Gradle': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-gradle'),
     'A-JUnit': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-junit'),
-    'A-Jar': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-jar-create-a-jar-file'),
-    'A-JavaDoc': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-javadoc-javadoc'),
-    'A-CodingStandard': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-codingstandard-follow-the-coding-standard'),
+    'A-Jar': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-jar'),
+    'A-JavaDoc': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-javadoc'),
+    'A-CodingStandard': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-codingstandard'),
     'Level-9': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-level-9-find'),
 }
 
