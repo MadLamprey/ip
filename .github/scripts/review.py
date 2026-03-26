@@ -65,7 +65,9 @@ def get_git_diff(prev_tag, current_tag):
         result = subprocess.run(['git', 'diff', '--no-pager', f'{prev_tag}..{current_tag}'],
                               capture_output=True, text=True, check=True)
         return result.stdout
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
+        print(f"DEBUG diff stderr: {e.stderr}")  # ← add this
+        print(f"DEBUG diff stdout: {e.stdout}")
         return "Error: Could not generate diff"
 
 def get_requirements_text(tag):
