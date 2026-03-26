@@ -9,36 +9,24 @@ as GitHub commit comments.
 import os
 import subprocess
 import requests
-from bs4 import BeautifulSoup
 from groq import Groq
 import json
 
-# Mapping of increment tags to their requirement URLs and anchors
-TAG_REQUIREMENTS = {
-    # Week 2 increments
-    'Level-0': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html', 'duke-level-0-rename-greet-exit'),
-    'Level-1': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html', 'duke-level-1-echo'),
-    'Level-2': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html', 'duke-level-2-add-list'),
-    'Level-3': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html', 'duke-level-3-mark-as-done'),
-    'Level-4': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html', 'duke-level-4-todo-event-deadline'),
-    'A-TextUiTesting': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html', 'duke-a-textuitesting-automated-text-ui-testing'),
-    'Level-5': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html', 'duke-level-5-handle-errors'),
-    'Level-6': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html', 'duke-level-6-delete'),
-    'A-Enums': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html', 'duke-a-enums-enums'),
+REQUIREMENTS_FILE = os.path.join(
+    os.path.dirname(__file__), '..', 'requirements.json'
+)
 
-    # Week 3 increments
-    'Level-7': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-level-7-save'),
-    'Level-8': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-level-8-dates-and-times'),
-    'A-MoreOOP': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-moreoop'),
-    'A-Packages': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-packages'),
-    'A-Gradle': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-gradle'),
-    'A-JUnit': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-junit'),
-    'A-Jar': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-jar'),
-    'A-JavaDoc': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-javadoc'),
-    'A-CodingStandard': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-a-codingstandard'),
-    'Level-9': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html', 'duke-level-9-find'),
-    'A-AiAssisted': ('https://nus-cs2103-ay2526-s2.github.io/website/schedule/week6/project.html', '1-add-increment-a-aiassisted'),
-}
+def load_requirements_db():
+    """Load the requirements JSON file. Returns the 'increments' dict or {}."""
+    try:
+        with open(REQUIREMENTS_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return data.get('increments', {})
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"Could not load requirements.json: {e}")
+        return {}
+
+REQUIREMENTS_DB = load_requirements_db()
 
 def get_current_tag():
     """Get the current tag from GITHUB_REF"""
@@ -78,34 +66,46 @@ def get_git_diff(prev_tag, current_tag):
     except subprocess.CalledProcessError:
         return "Error: Could not generate diff"
 
-def fetch_requirements(url, anchor):
-    """Fetch the requirements text from the course website"""
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
+def get_requirements_text(tag):
+    """
+    Return a formatted requirements string for the given tag.
+    Loads from requirements.json. Returns an error string if not found.
+    """
+    entry = REQUIREMENTS_DB.get(tag)
+    if not entry:
+        return f"Error: No requirements found for tag '{tag}' in requirements.json"
 
-        soup = BeautifulSoup(response.content, 'html.parser')
-        section = soup.find(id=anchor)
+    lines = [f"## {entry.get('title', tag)} (Week {entry.get('week', '?')})"]
+    lines.append(f"\n{entry.get('description', '')}\n")
 
-        if not section:
-            return f"Error: Could not find requirements section with id '{anchor}'"
+    reqs = entry.get('requirements', [])
+    if reqs:
+        lines.append("**Must implement:**")
+        for r in reqs:
+            lines.append(f"- {r}")
 
-        # Extract text from the section until the next duke- section
-        content = []
-        for element in section.find_all_next(['p', 'ul', 'ol', 'li', 'code', 'pre', 'blockquote']):
-            if element.find_parent() and element.find_parent().get('id') and element.find_parent().get('id') != anchor:
-                parent_id = element.find_parent().get('id')
-                if parent_id and parent_id.startswith('duke-') and parent_id != anchor:
-                    break
-            text = element.get_text(separator=' ', strip=True)
-            if text:
-                content.append(text)
+    constraints = entry.get('constraints', [])
+    if constraints:
+        lines.append("\n**Constraints / explicit don'ts:**")
+        for c in constraints:
+            lines.append(f"- {c}")
 
-        text = ' '.join(content)
-        return text[:2000]  # Limit to reasonable length
+    hints = entry.get('hints', [])
+    if hints:
+        lines.append("\n**Hints:**")
+        for h in hints:
+            lines.append(f"- {h}")
 
-    except requests.RequestException as e:
-        return f"Error fetching requirements: {e}"
+    return '\n'.join(lines)
+
+
+def get_requirements_url(tag):
+    """Return the official URL for the tag, or None."""
+    entry = REQUIREMENTS_DB.get(tag)
+    if entry and entry.get('url'):
+        return entry['url']
+    return None
+
 
 def call_llm(requirements, diff):
     """Call Groq LLM for code review"""
@@ -130,11 +130,8 @@ Provide your review in exactly three sections:
         response = client.chat.completions.create(
             model="llama3-8b-8192",  # Using Llama 3 8B model
             messages=[
-                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
-            ],
-            max_tokens=1000,
-            temperature=0.7
+            ]
         )
         return response.choices[0].message.content
     except Exception as e:
@@ -157,12 +154,13 @@ def post_github_comment(review_text, tag):
 
     url = f"https://api.github.com/repos/{repo}/commits/{sha}/comments"
 
+    req_url = get_requirements_url(tag)
+    ref_line = f"\n📖 [Official requirements for {tag}]({req_url})" if req_url else ""
+
     comment_body = f"""## 🤖 iP Increment Review — `{tag}`
 
 {review_text}
-
-📖 [Official requirements for {tag}]({TAG_REQUIREMENTS[tag][0]}#{TAG_REQUIREMENTS[tag][1]})
-
+{ref_line}
 *This is an automated review. It may not be 100% accurate — use your own judgement and ask your TA if unsure.*"""
 
     headers = {
@@ -183,8 +181,8 @@ def main():
         print("No tag found in GITHUB_REF")
         return
 
-    if current_tag not in TAG_REQUIREMENTS:
-        print(f"Tag {current_tag} not in requirements mapping")
+    if current_tag not in REQUIREMENTS_DB:
+        print(f"Tag {current_tag} not found in requirements.json")
         return
 
     print(f"Processing review for tag: {current_tag}")
@@ -197,11 +195,10 @@ def main():
         print(f"Previous tag: {prev_tag}")
         diff = get_git_diff(prev_tag, current_tag)
 
-    url, anchor = TAG_REQUIREMENTS[current_tag]
-    requirements = fetch_requirements(url, anchor)
+    requirements = get_requirements_text(current_tag)
 
     if requirements.startswith("Error"):
-        review = f"Could not fetch requirements: {requirements}\n\nDiff summary:\n{diff[:500]}..."
+        review = f"Could not load requirements: {requirements}\n\nDiff summary:\n{diff[:500]}..."
     else:
         review = call_llm(requirements, diff)
 
