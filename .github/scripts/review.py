@@ -129,6 +129,7 @@ Provide your review in exactly three sections:
 - One thing done well"""
 
     try:
+        print(f"DEBUG user_prompt: {user_prompt}") 
         response = client.chat.completions.create(
             model="llama-3.1-8b-instant",  # Using Llama 3 8B model
             messages=[
