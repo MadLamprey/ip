@@ -23,3 +23,5 @@ text-ui-test/EXPECTED-UNIX.TXT
 .env
 
 models/
+
+venv

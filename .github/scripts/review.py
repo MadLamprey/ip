@@ -128,7 +128,7 @@ Provide your review in exactly three sections:
 
     try:
         response = client.chat.completions.create(
-            model="llama3-8b-8192",  # Using Llama 3 8B model
+            model="llama-3.1-8b-instant",  # Using Llama 3 8B model
             messages=[
                 {"role": "user", "content": user_prompt}
             ]
