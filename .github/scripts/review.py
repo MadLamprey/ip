@@ -41,11 +41,12 @@ def get_previous_tag(current_tag):
         # Get all tags sorted by creation date (newest first)
         result = subprocess.run(['git', 'for-each-ref', '--sort=-creatordate', '--format="%(refname:short)"', 'refs/tags'],
                               capture_output=True, text=True, check=True)
-        tags = [tag.strip('"') for tag in result.stdout.strip().split('\n') if tag.strip()]
+        print(f"DEBUG all tags:\n{result.stdout}")
+        tags = [tag.strip() for tag in result.stdout.strip().split('\n') if tag.strip()]
 
         # Filter to only tags that match our pattern
         matching_tags = [tag for tag in tags if tag.startswith(('Level-', 'A-', 'B-'))]
-
+        print(f"DEBUG matching tags: {matching_tags}") 
         # Find current tag and return the next one (which is older)
         try:
             current_index = matching_tags.index(current_tag)
@@ -130,6 +131,7 @@ Provide your review in exactly three sections:
         response = client.chat.completions.create(
             model="llama-3.1-8b-instant",  # Using Llama 3 8B model
             messages=[
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ]
         )
