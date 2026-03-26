@@ -1,16 +1,16 @@
 package bruno.ai;
 
+import java.util.List;
+
+import bruno.Parser;
+import bruno.TaskList;
+import bruno.exceptions.BrunoException;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.openai.OpenAiChatModel;
-import java.util.List;
-
-import bruno.Parser;
-import bruno.TaskList;
-import bruno.exceptions.BrunoException;
 
 public class AgentMode {
 
