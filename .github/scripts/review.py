@@ -62,7 +62,7 @@ def get_previous_tag(current_tag):
 def get_git_diff(prev_tag, current_tag):
     """Get the git diff between two tags"""
     try:
-        result = subprocess.run(['git', 'diff', '--no-pager', f'{prev_tag}..{current_tag}'],
+        result = subprocess.run(['git', '--no-pager', 'diff', f'{prev_tag}..{current_tag}'],
                               capture_output=True, text=True, check=True)
         return result.stdout
     except subprocess.CalledProcessError as e:
