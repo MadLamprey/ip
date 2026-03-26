@@ -39,9 +39,10 @@ def get_previous_tag(current_tag):
     """Get the previous tag in chronological order that matches our pattern"""
     try:
         # Get all tags sorted by creation date (newest first)
-        result = subprocess.run(['git', 'for-each-ref', '--sort=-creatordate', '--format="%(refname:short)"', 'refs/tags'],
-                              capture_output=True, text=True, check=True)
-        print(f"DEBUG all tags:\n{result.stdout}")
+        result = subprocess.run(
+    ['git', 'for-each-ref', '--sort=-creatordate', '--format=%(refname:short)', 'refs/tags'],
+    capture_output=True, text=True, check=True
+)
         tags = [tag.strip() for tag in result.stdout.strip().split('\n') if tag.strip()]
 
         # Filter to only tags that match our pattern
