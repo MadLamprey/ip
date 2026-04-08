@@ -6,15 +6,26 @@ on:
       - 'Level-*'
       - 'A-*'
       - 'B-*'
+  issue_comment:
+    types:
+      - created
 
 jobs:
   review:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
     steps:
-      - name: Checkout code
+      - name: Checkout code for tag review
+        if: github.event_name == 'push'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Checkout code for issue replies
+        if: github.event_name == 'issue_comment'
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -26,7 +37,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests groq
 
-      - name: Run review script
+      - name: Run issue-based reviewer
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
