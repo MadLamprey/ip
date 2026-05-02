@@ -35,7 +35,8 @@ _PROVIDERS = {
 
 
 def _provider() -> str:
-    name = os.environ.get("IP_REVIEWER_PROVIDER", DEFAULT_PROVIDER).lower()
+    raw = (os.environ.get("IP_REVIEWER_PROVIDER") or "").strip().lower()
+    name = raw or DEFAULT_PROVIDER
     if name not in _PROVIDERS:
         raise RuntimeError(
             f"Unsupported IP_REVIEWER_PROVIDER={name!r}. "
@@ -45,7 +46,7 @@ def _provider() -> str:
 
 
 def _model() -> str:
-    explicit = os.environ.get("IP_REVIEWER_MODEL")
+    explicit = (os.environ.get("IP_REVIEWER_MODEL") or "").strip()
     if explicit:
         return explicit
     return _PROVIDERS[_provider()]["model"]
@@ -72,31 +73,45 @@ def _client():
     raise RuntimeError(f"Unsupported provider: {name}")
 
 
-def chat(messages: Iterable[dict], *, temperature: float = DEFAULT_TEMPERATURE) -> str:
+def chat(
+    messages: Iterable[dict],
+    *,
+    temperature: float = DEFAULT_TEMPERATURE,
+    response_format: dict | None = None,
+) -> str:
     """Send a chat completion and return the model's text reply."""
-    response = _client().chat.completions.create(
-        model=_model(),
-        temperature=temperature,
-        messages=list(messages),
-    )
+    kwargs = {
+        "model": _model(),
+        "temperature": temperature,
+        "messages": list(messages),
+    }
+    if response_format is not None:
+        kwargs["response_format"] = response_format
+    response = _client().chat.completions.create(**kwargs)
     return response.choices[0].message.content or ""
 
 
 def chat_json(messages: Iterable[dict], *, temperature: float = JSON_TEMPERATURE):
-    """Like chat(), but parse the reply as JSON.
+    """Like chat(), but constrain output to JSON and parse it.
 
-    Smaller models occasionally wrap their JSON in prose. We try strict
-    parsing first, then extract the first JSON object/array via a permissive
-    regex.
+    Both Groq and OpenAI support `response_format={"type": "json_object"}`,
+    which constrains the model to emit valid JSON. The caller is responsible
+    for asking for an object (the format does not allow a bare array). We
+    fall back to permissive regex extraction if for some reason the response
+    still isn't strict JSON.
     """
-    raw = chat(messages, temperature=temperature)
+    raw = chat(
+        messages,
+        temperature=temperature,
+        response_format={"type": "json_object"},
+    )
 
     try:
         return json.loads(raw)
     except json.JSONDecodeError:
         pass
 
-    match = re.search(r"(\[.*\]|\{.*\})", raw, re.DOTALL)
+    match = re.search(r"(\{.*\}|\[.*\])", raw, re.DOTALL)
     if not match:
         raise ValueError(f"Model did not return JSON. Got: {raw[:300]!r}")
 

@@ -73,11 +73,11 @@ _SCENARIO_SYSTEM = (
     "that probe assumptions the student likely made in their parser or command "
     "handlers. You only generate inputs — you never write code, never explain "
     "fixes, and never grade.\n\n"
-    "Reply with a JSON array. Each element has the shape:\n"
-    '  {"name": "...", "intent": "...", "lines": ["...", "..."]}\n'
-    "where `lines` are the lines that will be piped to the chatbot's stdin in "
-    "order. The chatbot expects one command per line. Do not include a final "
-    "`bye` — the runner appends it.\n"
+    "Reply with a single JSON object of the form:\n"
+    '  {"scenarios": [ {"name": "...", "intent": "...", "lines": ["...", "..."]}, ... ]}\n'
+    "where each `lines` array is the lines that will be piped to the chatbot's "
+    "stdin in order. The chatbot expects one command per line. Do NOT include "
+    "a final `bye` — the runner appends it.\n"
     "Generate inputs that target malformed syntax, missing arguments, ordering "
     "ambiguities, whitespace and empty inputs, very long inputs, out-of-range "
     "indices, and unicode where relevant. Avoid trivially valid inputs — those "
@@ -94,7 +94,7 @@ def _generate_scenarios(tag: str, requirements: str, diff: str) -> list[dict]:
         f"Generate exactly {NUM_TEST_INPUTS} adversarial test scenarios as a JSON array."
     )
     try:
-        scenarios = llm.chat_json(
+        payload = llm.chat_json(
             [
                 {"role": "system", "content": _SCENARIO_SYSTEM},
                 {"role": "user", "content": user},
@@ -103,6 +103,14 @@ def _generate_scenarios(tag: str, requirements: str, diff: str) -> list[dict]:
     except Exception as exc:
         print(f"Scenario generation failed: {exc}")
         return []
+
+    if isinstance(payload, dict):
+        scenarios = payload.get("scenarios", [])
+    elif isinstance(payload, list):
+        # Legacy / fallback shape — accept it.
+        scenarios = payload
+    else:
+        scenarios = []
 
     cleaned: list[dict] = []
     for s in scenarios if isinstance(scenarios, list) else []:
