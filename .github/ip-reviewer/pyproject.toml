@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ip-reviewer"
+version = "0.2.0"
+description = "Three on-demand reviewers for the CS2103T iP, runnable as a GitHub Action."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Aditya Misra" }]
+dependencies = [
+    "groq>=0.11",
+    "openai>=1.40",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+]
+
+[project.scripts]
+ip-reviewer = "ip_reviewer.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ip_reviewer = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

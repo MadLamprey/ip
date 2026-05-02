@@ -1,16 +1,7 @@
 {
   "_meta": {
-    "description": "CS2103T iP increment requirements. Each entry maps a git tag to its increment details. This file is loaded by the AI reviewer at runtime.",
-    "format_version": "1.0",
-    "fields": {
-      "title": "Human-readable name of the increment",
-      "week": "Course week in which this increment is introduced",
-      "url": "Link to official requirements page (optional, for reference link in review comment)",
-      "description": "What the increment is about (1-2 sentences)",
-      "requirements": "List of concrete things the student must implement",
-      "constraints": "List of explicit do-nots or restrictions mentioned in the requirements",
-      "hints": "Optional pedagogical hints the reviewer may reference"
-    }
+    "description": "CS2103T iP increment requirements. Each entry maps a git tag to its increment. Loaded by the reviewer on tag pushes.",
+    "format_version": "2.0"
   },
   "increments": {
     "Level-0": {
@@ -27,9 +18,6 @@
       "constraints": [
         "Do not keep the name 'Duke'",
         "The program must not exit without showing a farewell message"
-      ],
-      "hints": [
-        "This increment is mostly about getting familiar with the codebase structure"
       ]
     },
     "Level-1": {
@@ -43,9 +31,8 @@
         "The loop exits when the user types 'bye'"
       ],
       "constraints": [
-        "Input must be read from standard input (Scanner or similar)"
-      ],
-      "hints": []
+        "Input must be read from standard input"
+      ]
     },
     "Level-2": {
       "title": "Add, List",
@@ -61,9 +48,6 @@
       "constraints": [
         "At this level all tasks are plain text — no types yet",
         "Tasks should be stored in an in-memory list (no file persistence required yet)"
-      ],
-      "hints": [
-        "Consider using an ArrayList<String> or a fixed-size array"
       ]
     },
     "Level-3": {
@@ -79,9 +63,6 @@
       ],
       "constraints": [
         "Marking an already-done task again should not cause an error"
-      ],
-      "hints": [
-        "Introduce a Task class to hold description and status together"
       ]
     },
     "Level-4": {
@@ -99,28 +80,6 @@
       "constraints": [
         "Typing plain text that is not a recognised command should produce an error message",
         "Missing /by or /from /to should produce an informative error, not a crash"
-      ],
-      "hints": [
-        "This is a good place to use inheritance: Task as parent, ToDo/Deadline/Event as subclasses"
-      ]
-    },
-    "A-TextUiTesting": {
-      "title": "Automated Text UI Testing",
-      "week": 2,
-      "url": "https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html",
-      "description": "Set up automated text-based UI testing using input/expected-output file comparison.",
-      "requirements": [
-        "A test input file (e.g. text-ui-test/input.txt) drives the chatbot",
-        "The chatbot's actual output is captured to a file",
-        "A script compares actual output to an expected output file and reports pass/fail",
-        "The test is runnable via a single command or script"
-      ],
-      "constraints": [
-        "Tests must be reproducible — same input must always produce same output",
-        "Do not hardcode file paths; use relative paths so tests work on any machine"
-      ],
-      "hints": [
-        "Check the project template for the runtest.bat / runtest.sh scripts provided"
       ]
     },
     "Level-5": {
@@ -130,16 +89,13 @@
       "description": "Make the chatbot handle erroneous input gracefully without crashing.",
       "requirements": [
         "Unknown commands produce a clear error message",
-        "Missing arguments (e.g. 'deadline' with no description) produce a specific error",
+        "Missing arguments produce a specific error",
         "Out-of-range task numbers produce an error message",
         "The chatbot continues running after an error — it does not exit or throw an unhandled exception"
       ],
       "constraints": [
         "Do not use bare catch(Exception e) as the only error handler",
         "Error messages should be user-friendly, not stack traces"
-      ],
-      "hints": [
-        "Consider a custom DukeException class to distinguish expected errors from programming bugs"
       ]
     },
     "Level-6": {
@@ -154,23 +110,6 @@
       ],
       "constraints": [
         "Deleting a task number that does not exist should produce an error, not a crash"
-      ],
-      "hints": []
-    },
-    "A-Enums": {
-      "title": "Enums",
-      "week": 2,
-      "url": "https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html",
-      "description": "Refactor command parsing to use Java enums.",
-      "requirements": [
-        "Define a Java enum for the recognised commands (e.g. BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE)",
-        "Command parsing uses the enum instead of raw string comparisons"
-      ],
-      "constraints": [
-        "The enum must actually be used in the control flow, not just defined"
-      ],
-      "hints": [
-        "Enums can have methods and fields — you can attach a description or parser to each constant"
       ]
     },
     "Level-7": {
@@ -186,11 +125,7 @@
       ],
       "constraints": [
         "Do not use absolute paths for the save file",
-        "The data/ directory should be created automatically if it does not exist",
-        "The file format must be parseable — plain text or a structured format you define"
-      ],
-      "hints": [
-        "Separate file I/O into a Storage class for clean separation of concerns"
+        "The data/ directory should be created automatically if it does not exist"
       ]
     },
     "Level-8": {
@@ -206,9 +141,49 @@
       "constraints": [
         "Do not store dates as plain strings after this increment",
         "At minimum support one input date format (e.g. yyyy-MM-dd)"
+      ]
+    },
+    "Level-9": {
+      "title": "Find",
+      "week": 3,
+      "url": "https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html",
+      "description": "Allow the user to search for tasks by keyword.",
+      "requirements": [
+        "'find <keyword>' searches all tasks and lists those whose description contains the keyword",
+        "Results are displayed in a numbered list",
+        "If no tasks match, a message indicates no results were found"
       ],
-      "hints": [
-        "java.time.LocalDate and DateTimeFormatter are the idiomatic Java 8+ tools for this"
+      "constraints": [
+        "The original task numbers in the full list must be preserved in find results so the user can act on them"
+      ]
+    },
+    "A-TextUiTesting": {
+      "title": "Automated Text UI Testing",
+      "week": 2,
+      "url": "https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html",
+      "description": "Set up automated text-based UI testing using input/expected-output file comparison.",
+      "requirements": [
+        "A test input file drives the chatbot",
+        "The chatbot's actual output is captured to a file",
+        "A script compares actual output to an expected output file and reports pass/fail",
+        "The test is runnable via a single command or script"
+      ],
+      "constraints": [
+        "Tests must be reproducible — same input must always produce same output",
+        "Do not hardcode file paths; use relative paths so tests work on any machine"
+      ]
+    },
+    "A-Enums": {
+      "title": "Enums",
+      "week": 2,
+      "url": "https://nus-cs2103-ay2526-s2.github.io/website/schedule/week2/project.html",
+      "description": "Refactor command parsing to use Java enums.",
+      "requirements": [
+        "Define a Java enum for the recognised commands",
+        "Command parsing uses the enum instead of raw string comparisons"
+      ],
+      "constraints": [
+        "The enum must actually be used in the control flow, not just defined"
       ]
     },
     "A-MoreOOP": {
@@ -220,14 +195,11 @@
         "Extract a Ui class responsible for all user-facing input/output",
         "Extract a TaskList class to manage the collection of tasks",
         "Extract a Parser class to interpret user commands",
-        "The main class (or a Duke class) orchestrates the above, but does not perform I/O or parsing directly"
+        "The main class orchestrates the above, but does not perform I/O or parsing directly"
       ],
       "constraints": [
         "Each class should have a single, clear responsibility",
         "Avoid static methods for core logic — use instances"
-      ],
-      "hints": [
-        "The goal is separation of concerns, not just moving code into new files"
       ]
     },
     "A-Packages": {
@@ -236,14 +208,13 @@
       "url": "https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html",
       "description": "Organise classes into Java packages.",
       "requirements": [
-        "Classes are placed in a meaningful package (e.g. duke or your chatbot's name, all lowercase)",
+        "Classes are placed in a meaningful package",
         "Package declarations appear at the top of each .java file",
-        "The project still compiles and runs correctly after the reorganisation"
+        "The project still compiles and runs correctly"
       ],
       "constraints": [
         "Package names must be lowercase per Java conventions"
-      ],
-      "hints": []
+      ]
     },
     "A-Gradle": {
       "title": "Gradle",
@@ -253,15 +224,11 @@
       "requirements": [
         "The project uses the Gradle build tool (build.gradle present)",
         "'./gradlew run' launches the chatbot",
-        "'./gradlew build' compiles the project without errors",
-        "Dependencies (if any) are declared in build.gradle"
+        "'./gradlew build' compiles the project without errors"
       ],
       "constraints": [
-        "Do not commit the .gradle/ cache directory — add it to .gitignore",
-        "The gradlew wrapper scripts must be committed so the build is reproducible"
-      ],
-      "hints": [
-        "The course provides a Gradle template — adapt it rather than writing from scratch"
+        "Do not commit the .gradle/ cache directory",
+        "The gradlew wrapper scripts must be committed"
       ]
     },
     "A-JUnit": {
@@ -275,11 +242,7 @@
         "'./gradlew test' runs all tests and they pass"
       ],
       "constraints": [
-        "Tests must not depend on system state or file system by default",
         "Test class names should end in 'Test' per JUnit convention"
-      ],
-      "hints": [
-        "Good candidates: Parser (command parsing logic) and TaskList (add/delete/find logic)"
       ]
     },
     "A-Jar": {
@@ -288,15 +251,14 @@
       "url": "https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html",
       "description": "Package the application as a runnable JAR file.",
       "requirements": [
-        "'./gradlew shadowJar' (or equivalent) produces a fat JAR in build/libs/",
-        "The JAR is runnable with 'java -jar <name>.jar' without any classpath flags",
+        "'./gradlew shadowJar' produces a fat JAR in build/libs/",
+        "The JAR is runnable with 'java -jar <name>.jar' without classpath flags",
         "The chatbot works correctly when launched from the JAR"
       ],
       "constraints": [
         "Do not commit the built JAR to the repository",
         "The main class must be declared in the JAR manifest"
-      ],
-      "hints": []
+      ]
     },
     "A-JavaDoc": {
       "title": "JavaDoc",
@@ -309,10 +271,8 @@
         "'./gradlew javadoc' generates documentation without errors or warnings"
       ],
       "constraints": [
-        "JavaDoc must describe intent and behaviour, not just restate the method name",
-        "Do not add JavaDoc to private/package-private members (not required)"
-      ],
-      "hints": []
+        "JavaDoc must describe intent and behaviour, not just restate the method name"
+      ]
     },
     "A-CodingStandard": {
       "title": "Coding Standard",
@@ -323,32 +283,13 @@
         "Class names are UpperCamelCase",
         "Method and variable names are lowerCamelCase",
         "Constants are UPPER_SNAKE_CASE",
-        "Braces follow the Java style (opening brace on same line)",
-        "No wildcard imports (import java.util.* not allowed)",
-        "Lines are not excessively long (max ~120 characters)"
+        "Braces follow Java style (opening brace on same line)",
+        "No wildcard imports",
+        "Lines do not exceed ~120 characters"
       ],
       "constraints": [
         "Refer to the CS2103T coding standard page for the full list of rules"
-      ],
-      "hints": [
-        "IntelliJ's 'Reformat Code' action handles most style issues automatically"
       ]
-    },
-    "Level-9": {
-      "title": "Find",
-      "week": 3,
-      "url": "https://nus-cs2103-ay2526-s2.github.io/website/schedule/week3/project.html",
-      "description": "Allow the user to search for tasks by keyword.",
-      "requirements": [
-        "'find <keyword>' searches all tasks and lists those whose description contains the keyword",
-        "The results are displayed in a numbered list",
-        "If no tasks match, a message indicates no results were found",
-        "The search is case-insensitive (recommended, not strictly required)"
-      ],
-      "constraints": [
-        "The original task numbers in the full list must be preserved in find results so the user can act on them"
-      ],
-      "hints": []
     },
     "A-AiAssisted": {
       "title": "AI-Assisted Development",
@@ -356,16 +297,12 @@
       "url": "https://nus-cs2103-ay2526-s2.github.io/website/schedule/week6/project.html",
       "description": "Use an AI coding assistant to implement one increment and document the experience.",
       "requirements": [
-        "At least one increment is implemented with the help of an AI tool (e.g. GitHub Copilot, ChatGPT, Claude)",
+        "At least one increment is implemented with the help of an AI tool",
         "A commit message or comment clearly indicates which parts were AI-assisted",
-        "A brief reflection is added (in a commit message, PR description, or README section) describing: what the AI produced, what you changed, and what you learned"
+        "A brief reflection describes what the AI produced, what you changed, and what you learned"
       ],
       "constraints": [
-        "You must understand and be able to explain every line of AI-generated code you commit",
-        "Do not commit AI output blindly without review"
-      ],
-      "hints": [
-        "The reflection is the learning artifact here — a thoughtful one-paragraph reflection is better than a long uncritical one"
+        "You must understand and be able to explain every line of AI-generated code you commit"
       ]
     }
   }
