@@ -15,8 +15,8 @@ from pathlib import Path
 
 from .. import github, increments, issues, llm, repo
 
-MAX_FILE_HEAD_CHARS = 1500
-MAX_TOTAL_DIGEST_CHARS = 18000
+MAX_FILE_HEAD_CHARS = 1200
+MAX_TOTAL_DIGEST_CHARS = 12000
 
 _RUBRIC_PATH_CANDIDATES = [
     Path(".github/ip-reviewer/rubric.md"),
@@ -38,7 +38,11 @@ def run(*, tag: str, issue: dict) -> None:
         github.post_comment(github.repo(), issue["number"], body)
         return
 
-    mapping = _ask_llm(tag, rubric_text, increment_summary, inventory)
+    try:
+        mapping = _ask_llm(tag, rubric_text, increment_summary, inventory)
+    except Exception as exc:
+        mapping = _llm_error_message(exc)
+
     body = issues.comment_body("Rubric mapping", mapping)
     github.post_comment(github.repo(), issue["number"], body)
     print(f"Posted rubric mapping for {tag}")
@@ -90,6 +94,21 @@ _SYSTEM = (
     "**Gaps:** <what is missing, or 'none observed'>\n"
     "(repeat for each criterion in the rubric)\n"
 )
+
+
+def _llm_error_message(exc: Exception) -> str:
+    text = str(exc)
+    if "rate_limit" in text.lower() or "413" in text or "too large" in text.lower():
+        return (
+            "The repository is too large for the current LLM provider's free-tier "
+            "rate limit, so the rubric mapping could not run.\n\n"
+            "Options:\n"
+            "- Switch to a higher provider tier (paid Groq tier, or set "
+            "`IP_REVIEWER_PROVIDER=openai` with an `OPENAI_API_KEY`).\n"
+            "- Re-run after a smaller refactor branch is checked out.\n\n"
+            f"Raw error: `{text[:300]}`"
+        )
+    return f"Rubric mapping could not be generated: `{text[:400]}`"
 
 
 def _ask_llm(tag: str, rubric_text: str, increment_summary: str, inventory: str) -> str:

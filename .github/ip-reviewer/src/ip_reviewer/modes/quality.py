@@ -18,8 +18,8 @@ from pathlib import Path
 
 from .. import github, issues, llm, repo
 
-MAX_FILE_CHARS = 6000
-MAX_TOTAL_CHARS = 30000
+MAX_FILE_CHARS = 4000
+MAX_TOTAL_CHARS = 16000
 
 _STANDARD_PATH_CANDIDATES = [
     Path(".github/ip-reviewer/coding-standard.md"),
@@ -39,7 +39,11 @@ def run(*, tag: str, issue: dict) -> None:
 
     standard = _load_standard()
     rendered = _render_files(files)
-    findings = _ask_llm(tag, standard, rendered)
+
+    try:
+        findings = _ask_llm(tag, standard, rendered)
+    except Exception as exc:
+        findings = _llm_error_message(exc)
 
     body = issues.comment_body("Code quality review", findings)
     github.post_comment(github.repo(), issue["number"], body)
@@ -93,6 +97,21 @@ _SYSTEM = (
     "- Cap the report at roughly 12 findings. Prefer the most load-bearing.\n"
     "- If you find nothing notable, say so — do not invent issues."
 )
+
+
+def _llm_error_message(exc: Exception) -> str:
+    text = str(exc)
+    if "rate_limit" in text.lower() or "413" in text or "too large" in text.lower():
+        return (
+            "The repository is too large for the current LLM provider's free-tier "
+            "rate limit, so the quality review could not run.\n\n"
+            "Options:\n"
+            "- Switch to a higher provider tier (paid Groq tier, or set "
+            "`IP_REVIEWER_PROVIDER=openai` with an `OPENAI_API_KEY`).\n"
+            "- Run the review on a smaller subset of files in a focused branch.\n\n"
+            f"Raw error: `{text[:300]}`"
+        )
+    return f"Quality review could not be generated: `{text[:400]}`"
 
 
 def _ask_llm(tag: str, standard: str, rendered_sources: str) -> str:
